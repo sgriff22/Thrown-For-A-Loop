@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Transactions;
-
-List<Product> products = new List<Product>()
+﻿List<Product> products = new List<Product>()
 {
     new Product()
     { 
@@ -34,8 +31,8 @@ List<Product> products = new List<Product>()
     {
         Name = "Cleats",
         Price = 20.99M,
-        SoldOnDate = new DateTime(2024, 7, 20),
-        StockDate = new DateTime(2024, 7, 30),
+        SoldOnDate = new DateTime(2024, 7, 30),
+        StockDate = new DateTime(2024, 7, 20),
         ManufactureYear = 2021,
         Condition = 3.4
     },
@@ -89,7 +86,9 @@ while (choice != "0")
 2. View Product Details
 3. View Latest Products
 4. Monthly Sales Report
-5. Add New Product");
+5. Add New Product
+6. View Average Time in Stock
+7. View Average Time in Stock for Sold Products");
     choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -114,6 +113,14 @@ while (choice != "0")
     else if (choice == "5")
     {
         AddProduct();
+    }
+    else if (choice == "6")
+    {
+        AverageTimeInStock(); 
+    }
+    else if (choice == "7")
+    {
+        AverageTimeInStockForSold(); 
     }
 }
 
@@ -360,4 +367,21 @@ void UpdateProduct(Product chosenProduct)
             Console.WriteLine($"The product '{chosenProduct.Name}' has been marked as sold on {chosenProduct.SoldOnDate:MMMM dd, yyyy}.");
         }
     } 
+}
+
+void AverageTimeInStock()
+{
+    List<Product> inStockProducts = products.Where(p => p.SoldOnDate == null).ToList();
+    int sumDaysInStock = inStockProducts.Sum(p => p.TimeInStock.Days);
+    int averageDays = sumDaysInStock / inStockProducts.Count;
+    Console.WriteLine($"Average time in stock for currently available products: {averageDays} days.");
+}
+
+void AverageTimeInStockForSold()
+{
+    List<Product> soldProducts = products.Where(p => p.SoldOnDate != null).ToList();
+    int sumDaysInStock = soldProducts.Sum(p => (p.SoldOnDate.Value - p.StockDate).Days);
+    int averageDaysInStock = sumDaysInStock / soldProducts.Count;
+
+    Console.WriteLine($"Average time in stock for sold products: {averageDaysInStock} days.");
 }
