@@ -1,4 +1,6 @@
-﻿List<Product> products = new List<Product>()
+﻿using System.Transactions;
+
+List<Product> products = new List<Product>()
 {
     new Product()
     { 
@@ -35,6 +37,42 @@
         StockDate = new DateTime(2024, 7, 30),
         ManufactureYear = 2021,
         Condition = 3.4
+    },
+    new Product()
+    {
+        Name = "Tennis Racket",
+        Price = 45.00M,
+        SoldOnDate = new DateTime(2024, 8, 10),
+        StockDate = new DateTime(2024, 5, 5),
+        ManufactureYear = 2023,
+        Condition = 4.0
+    },
+    new Product()
+    {
+        Name = "Baseball Glove",
+        Price = 25.00M,
+        SoldOnDate = new DateTime(2024, 8, 15),
+        StockDate = new DateTime(2024, 3, 15),
+        ManufactureYear = 2022,
+        Condition = 3.9
+    },
+    new Product()
+    {
+        Name = "Golf Club",
+        Price = 120.00M,
+        SoldOnDate = new DateTime(2024, 8, 5),
+        StockDate = new DateTime(2023, 11, 10),
+        ManufactureYear = 2023,
+        Condition = 4.7
+    },
+    new Product()
+    {
+        Name = "Soccer Ball",
+        Price = 18.00M,
+        SoldOnDate = new DateTime(2024, 8, 18),
+        StockDate = new DateTime(2024, 2, 22),
+        ManufactureYear = 2024,
+        Condition = 4.3
     }
 };
 string greeting = @"Welcome to Thrown For a Loop
@@ -48,7 +86,8 @@ while (choice != "0")
 0. Exit
 1. View All Products
 2. View Product Details
-3. View Latest Products");
+3. View Latest Products
+4. Monthly Sales Report");
     choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -65,6 +104,10 @@ while (choice != "0")
     else if (choice == "3")
     {
         ViewLatestProducts();
+    }
+    else if (choice == "4")
+    {
+        MonthlySalesReport();
     }
 }
 
@@ -143,4 +186,49 @@ void ViewLatestProducts()
     {
         Console.WriteLine($"{i + 1}. {latestProducts[i].Name}");
     }
+}
+
+void MonthlySalesReport()
+{
+    int year = 0;
+    int month = 0;
+    bool validYear = false;
+    bool validMonth = false;
+    while (!validYear)
+    {
+        try 
+        {
+            Console.WriteLine("Enter Year:");
+            year = int.Parse(Console.ReadLine().Trim());
+            validYear = true;
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please type only integers!");
+        }
+    }
+    while (!validMonth)
+    {
+        try 
+        {
+            Console.WriteLine("Enter Month Number:");
+            month = int.Parse(Console.ReadLine().Trim());
+            if (month < 1 || month > 12)
+            {
+                Console.WriteLine("Month must be between 1 and 12.");
+            }
+            else
+            {
+                validMonth = true;
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please type only integers!");
+        }
+    }
+    List<Product> productsFound = products.Where(p => p.SoldOnDate != null && p.SoldOnDate.Value.Year == year && p.SoldOnDate.Value.Month == month).ToList();
+    decimal totalMonthlySales = productsFound.Sum(p => p.Price);
+    Console.WriteLine($"Sales Report for {year}, Month {month}:");
+    Console.WriteLine($"Total Sales: ${totalMonthlySales:F2}");
 }
