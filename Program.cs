@@ -145,6 +145,7 @@ void ViewProductDetails()
             Console.WriteLine(ex);
             Console.WriteLine("Do Better!");
         }
+
     }
 
     Console.WriteLine(@$"You chose: 
@@ -152,6 +153,8 @@ void ViewProductDetails()
     It is {DateTime.Now.Year - chosenProduct.ManufactureYear} years old.
     It {(chosenProduct.SoldOnDate == null ? $"has been in stock for {chosenProduct.TimeInStock.Days} days." : "is not available.")}
     Condition rating: {chosenProduct.Condition}"); 
+    
+    UpdateProduct(chosenProduct);
 }
 
 void ListProducts()
@@ -343,4 +346,18 @@ Product Details:
     Manufacture Year: {newProduct.ManufactureYear}
     Condition: {newProduct.Condition}
     Stock Date: {newProduct.StockDate:MMMM dd, yyyy}");
+}
+
+void UpdateProduct(Product chosenProduct)
+{
+   if (chosenProduct.SoldOnDate == null)
+    {
+       Console.WriteLine("Would you like to mark this product as sold? (y/n): ");
+        string answer = Console.ReadLine().Trim().ToLower();
+        if (answer == "y")
+        {
+            chosenProduct.SoldOnDate = DateTime.Now;
+            Console.WriteLine($"The product '{chosenProduct.Name}' has been marked as sold on {chosenProduct.SoldOnDate:MMMM dd, yyyy}.");
+        }
+    } 
 }
