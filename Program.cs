@@ -1,4 +1,5 @@
-﻿using System.Transactions;
+﻿using System.Diagnostics;
+using System.Transactions;
 
 List<Product> products = new List<Product>()
 {
@@ -33,7 +34,7 @@ List<Product> products = new List<Product>()
     {
         Name = "Cleats",
         Price = 20.99M,
-        SoldOnDate = new DateTime(2024, 8, 20),
+        SoldOnDate = new DateTime(2024, 7, 20),
         StockDate = new DateTime(2024, 7, 30),
         ManufactureYear = 2021,
         Condition = 3.4
@@ -87,7 +88,8 @@ while (choice != "0")
 1. View All Products
 2. View Product Details
 3. View Latest Products
-4. Monthly Sales Report");
+4. Monthly Sales Report
+5. Add New Product");
     choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -108,6 +110,10 @@ while (choice != "0")
     else if (choice == "4")
     {
         MonthlySalesReport();
+    }
+    else if (choice == "5")
+    {
+        AddProduct();
     }
 }
 
@@ -231,4 +237,110 @@ void MonthlySalesReport()
     decimal totalMonthlySales = productsFound.Sum(p => p.Price);
     Console.WriteLine($"Sales Report for {year}, Month {month}:");
     Console.WriteLine($"Total Sales: ${totalMonthlySales:F2}");
+}
+
+void AddProduct()
+{
+    Console.WriteLine("\nAdd New Product");
+    string name = "";
+    decimal price = 0.0M;
+    int yearMade = 0;
+    double condition = 0.0;
+    bool validName = false;
+    bool validPrice = false;
+    bool validYearMade = false;
+    bool validCondition = false;
+    while(!validName)
+    {
+        Console.WriteLine("Enter Name:");
+        name = Console.ReadLine().Trim();
+        if (!string.IsNullOrEmpty(name))
+        {
+            validName = true;
+        }
+        else
+        {
+            Console.WriteLine("Name cannot be empty.");
+        }
+    }
+    while(!validPrice)
+    {
+        Console.WriteLine("Enter Price:");
+        try
+        {
+            price = decimal.Parse(Console.ReadLine().Trim());
+            if (price > 0)
+            {
+                validPrice = true;
+            }
+            else
+            {
+                Console.WriteLine("Price must be greater than 0.");
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Invalid price format. Please enter a valid decimal number.");
+        }
+    }
+    while(!validYearMade)
+    {
+        Console.WriteLine("Enter Manufacture Year:");
+        try
+        {
+            yearMade = int.Parse(Console.ReadLine().Trim());
+            int currentYear = DateTime.Now.Year;
+            if (yearMade >= 1900 && yearMade <= currentYear)
+            {
+                validYearMade = true;
+            }
+            else
+            {
+                Console.WriteLine($"Year must be between 1900 and {currentYear}.");
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Invalid year format. Please enter a valid integer.");
+        }
+    }
+    while(!validCondition)
+    {
+        Console.WriteLine("Enter Condition (0.0 to 5.0):");
+        try 
+        {
+            condition = double.Parse(Console.ReadLine().Trim());
+            if (condition >= 0.0 && condition <= 5.0)
+            {
+                validCondition = true;
+            }
+            else
+            {
+                Console.WriteLine("Condition must be between 0.0 and 5.0.");
+            }
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Invalid condition format. Please enter a valid number.");
+        }
+    }
+
+    Product newProduct = new Product
+    {
+        Name = name,
+        Price = price,
+        SoldOnDate = null,
+        StockDate = DateTime.Now,
+        ManufactureYear = yearMade,
+        Condition = condition
+    };
+    
+    products.Add(newProduct);
+    Console.WriteLine($@"Success! Your product has been added to the inventory.
+Product Details:
+    Name: {newProduct.Name}
+    Price: {newProduct.Price:C} 
+    Manufacture Year: {newProduct.ManufactureYear}
+    Condition: {newProduct.Condition}
+    Stock Date: {newProduct.StockDate:MMMM dd, yyyy}");
 }
