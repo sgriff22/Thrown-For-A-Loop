@@ -1,6 +1,6 @@
 ﻿List<Product> products = new List<Product>()
 {
-    new Product()
+    new Product() 
     { 
         Name = "Football", 
         Price = 15.00M, 
@@ -31,8 +31,8 @@
     {
         Name = "Cleats",
         Price = 20.99M,
-        SoldOnDate = new DateTime(2024, 7, 30),
-        StockDate = new DateTime(2024, 7, 20),
+        SoldOnDate = new DateTime(2024, 7, 30, 14, 30, 0), 
+        StockDate = new DateTime(2024, 7, 20, 9, 0, 0),
         ManufactureYear = 2021,
         Condition = 3.4
     },
@@ -40,8 +40,8 @@
     {
         Name = "Tennis Racket",
         Price = 45.00M,
-        SoldOnDate = new DateTime(2024, 8, 10),
-        StockDate = new DateTime(2024, 5, 5),
+        SoldOnDate = new DateTime(2024, 7, 30, 14, 45, 0), 
+        StockDate = new DateTime(2024, 5, 5, 10, 0, 0),
         ManufactureYear = 2023,
         Condition = 4.0
     },
@@ -49,8 +49,8 @@
     {
         Name = "Baseball Glove",
         Price = 25.00M,
-        SoldOnDate = new DateTime(2024, 8, 15),
-        StockDate = new DateTime(2024, 3, 15),
+        SoldOnDate = new DateTime(2024, 8, 15, 18, 45, 0),
+        StockDate = new DateTime(2024, 3, 15, 11, 0, 0),
         ManufactureYear = 2022,
         Condition = 3.9
     },
@@ -58,8 +58,8 @@
     {
         Name = "Golf Club",
         Price = 120.00M,
-        SoldOnDate = new DateTime(2024, 8, 5),
-        StockDate = new DateTime(2023, 11, 10),
+        SoldOnDate = new DateTime(2024, 8, 5, 9, 15, 0),
+        StockDate = new DateTime(2023, 11, 10, 15, 0, 0),
         ManufactureYear = 2023,
         Condition = 4.7
     },
@@ -67,12 +67,13 @@
     {
         Name = "Soccer Ball",
         Price = 18.00M,
-        SoldOnDate = new DateTime(2024, 8, 18),
-        StockDate = new DateTime(2024, 2, 22),
+        SoldOnDate = new DateTime(2024, 8, 18, 12, 30, 0), 
+        StockDate = new DateTime(2024, 2, 22, 8, 0, 0),
         ManufactureYear = 2024,
         Condition = 4.3
     }
 };
+
 string greeting = @"Welcome to Thrown For a Loop
 Your one-stop shop for used sporting equipment";
 Console.WriteLine(greeting);
@@ -88,7 +89,8 @@ while (choice != "0")
 4. Monthly Sales Report
 5. Add New Product
 6. View Average Time in Stock
-7. View Average Time in Stock for Sold Products");
+7. View Average Time in Stock for Sold Products
+8. Display Busiest Sales Hours");
     choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -122,6 +124,11 @@ while (choice != "0")
     {
         AverageTimeInStockForSold(); 
     }
+    else if (choice == "8")
+    {
+        BusiestSalesHours();
+    }
+
 }
 
 
@@ -384,4 +391,31 @@ void AverageTimeInStockForSold()
     int averageDaysInStock = sumDaysInStock / soldProducts.Count;
 
     Console.WriteLine($"Average time in stock for sold products: {averageDaysInStock} days.");
+}
+
+void BusiestSalesHours()
+{
+    Dictionary<int, int> salesByHour = new Dictionary<int, int>();
+
+    for (int i = 0; i < 24; i++)
+    {
+        salesByHour[i] = 0;
+    }
+    foreach (Product product in products)
+    {
+        if (product.SoldOnDate != null)
+        {
+            int hour = product.SoldOnDate.Value.Hour;
+            salesByHour[hour]++;
+        }
+    }
+    Console.WriteLine("Sales by hour:");
+    for (int i = 0; i < 24; i++)
+    {
+        // Convert 24-hour format to 12-hour format and determine AM/PM
+        int hour12 = i % 12;
+        if (hour12 == 0) hour12 = 12; 
+        string period = i < 12 ? "AM" : "PM";
+        Console.WriteLine($"{hour12}:00-{hour12}:59{period} | {salesByHour[i]} sales");
+    }
 }
