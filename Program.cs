@@ -1,11 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
-List<Product> products = new List<Product>()
+﻿List<Product> products = new List<Product>()
 {
     new Product()
     { 
         Name = "Football", 
         Price = 15.00M, 
-        Sold = false,
+        SoldOnDate = null,
         StockDate = new DateTime(2022, 10, 20),
         ManufactureYear = 2010,
         Condition = 4.2
@@ -14,7 +13,7 @@ List<Product> products = new List<Product>()
     { 
         Name = "Hockey Stick", 
         Price = 12.50M, 
-        Sold = false,
+        SoldOnDate = null,
         StockDate = new DateTime(2023, 5, 12),
         ManufactureYear = 2022,
         Condition = 3.8
@@ -23,7 +22,7 @@ List<Product> products = new List<Product>()
     {
         Name = "Basketball",
         Price = 10.75M,
-        Sold = false,
+        SoldOnDate = null,
         StockDate = new DateTime(2024, 8, 13),
         ManufactureYear = 2023,
         Condition = 4.5
@@ -32,7 +31,7 @@ List<Product> products = new List<Product>()
     {
         Name = "Cleats",
         Price = 20.99M,
-        Sold = true,
+        SoldOnDate = new DateTime(2024, 8, 20),
         StockDate = new DateTime(2024, 7, 30),
         ManufactureYear = 2021,
         Condition = 3.4
@@ -46,10 +45,10 @@ string choice = null;
 while (choice != "0")
 {
     Console.WriteLine(@"Choose an option:
-                        0. Exit
-                        1. View All Products
-                        2. View Product Details
-                        3. View Latest Products");
+0. Exit
+1. View All Products
+2. View Product Details
+3. View Latest Products");
     choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -99,12 +98,10 @@ void ViewProductDetails()
         }
     }
 
-    DateTime now = DateTime.Now;
-    TimeSpan timeInStock = now - chosenProduct.StockDate;
     Console.WriteLine(@$"You chose: 
     {chosenProduct.Name}, which costs {chosenProduct.Price} dollars.
-    It is {now.Year - chosenProduct.ManufactureYear} years old.
-    It {(chosenProduct.Sold ? "is not available" : $"has bean in stock for {timeInStock.Days} days.")}
+    It is {DateTime.Now.Year - chosenProduct.ManufactureYear} years old.
+    It {(chosenProduct.SoldOnDate == null ? $"has been in stock for {chosenProduct.TimeInStock.Days} days." : "is not available.")}
     Condition rating: {chosenProduct.Condition}"); 
 }
 
@@ -113,7 +110,7 @@ void ListProducts()
     decimal totalValue = 0.0M;
     foreach (Product product in products)
     {
-        if (!product.Sold)
+        if (product.SoldOnDate == null)
         {
             totalValue += product.Price;
         }
@@ -137,7 +134,7 @@ void ViewLatestProducts()
     foreach (Product product in products)
     {
         //Add a product to latestProducts if it fits the criteria
-        if (product.StockDate > threeMonthsAgo && !product.Sold) {
+        if (product.StockDate > threeMonthsAgo && product.SoldOnDate == null) {
             latestProducts.Add(product);
         }
     }
@@ -147,16 +144,3 @@ void ViewLatestProducts()
         Console.WriteLine($"{i + 1}. {latestProducts[i].Name}");
     }
 }
-
-
-
-
-
-// if (string.IsNullOrEmpty(response))
-// {
-//     Console.WriteLine("You didn't choose anything!");
-// }
-// else
-// {
-//     Console.WriteLine($"You chose: {response}");
-// }
